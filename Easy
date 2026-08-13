@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZE AI Video Studio</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#080d12;
+  color:white;
+}
+
+.header{
+  padding:35px 20px;
+  text-align:center;
+  background:linear-gradient(135deg,#0b171b,#10251b);
+  border-bottom:1px solid #1d3b2b;
+}
+
+.header h1{
+  margin:0;
+  font-size:38px;
+}
+
+.header h1 span{
+  color:#20d15f;
+}
+
+.header p{
+  color:#aeb8bf;
+  font-size:18px;
+}
+
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:20px;
+}
+
+.card{
+  background:#111820;
+  border:1px solid #26333e;
+  border-radius:22px;
+  padding:22px;
+  margin-bottom:20px;
+}
+
+h2{
+  margin-top:0;
+}
+
+label{
+  display:block;
+  margin:14px 0 7px;
+  color:#c8d0d6;
+  font-weight:bold;
+}
+
+textarea,input,select{
+  width:100%;
+  background:#080d12;
+  color:white;
+  border:1px solid #33414c;
+  border-radius:14px;
+  padding:15px;
+  font-size:16px;
+  outline:none;
+}
+
+textarea{
+  min-height:130px;
+  resize:vertical;
+}
+
+button{
+  border:0;
+  border-radius:13px;
+  padding:14px 18px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:12px;
+}
+
+.primary{
+  width:100%;
+  background:#16b957;
+  color:white;
+  font-size:18px;
+}
+
+.secondary{
+  background:#202b35;
+  color:white;
+}
+
+.clip{
+  background:#0b1117;
+  border:1px solid #26333e;
+  border-radius:15px;
+  padding:15px;
+  margin-top:12px;
+}
+
+.clip-title{
+  color:#25d866;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+
+.clip-text{
+  color:#d5dce1;
+  line-height:1.5;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.actions button{
+  flex:1;
+}
+
+#result{
+  display:none;
+}
+
+.preview{
+  min-height:230px;
+  border:2px dashed #33414c;
+  border-radius:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:#77838c;
+  padding:20px;
+}
+
+.status{
+  color:#25d866;
+  margin-top:10px;
+  font-weight:bold;
+}
+
+@media(max-width:600px){
+  .row{grid-template-columns:1fr}
+  .header h1{font-size:30px}
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <h1>ZE <span>AI Video Studio</span></h1>
+  <p>Create your own AI video prompts</p>
+</header>
+
+<main class="container">
+
+<!-- PROMPT GENERATOR -->
+
+<section class="card">
+  <h2>✨ AI Prompt Generator</h2>
+
+  <label>What video do you want?</label>
+
+  <textarea id="topic"
+  placeholder="Example: Four cute fruits talking about 14 August in a Pakistani street..."></textarea>
+
+  <div class="row">
+
+    <div>
+      <label>Video Ratio</label>
+      <select id="ratio">
+        <option value="9:16">9:16 — TikTok / Shorts</option>
+        <option value="16:9">16:9 — YouTube</option>
+        <option value="1:1">1:1 — Instagram</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Style</label>
+      <select id="style">
+        <option>3D Animation</option>
+        <option>Realistic</option>
+        <option>Cinematic</option>
+        <option>Cartoon</option>
+        <option>Anime</option>
+      </select>
+    </div>
+
+  </div>
+
+  <button class="primary" onclick="generatePrompt()">
+    ✨ Generate Prompt
+  </button>
+
+  <div id="promptResult" style="display:none">
+
+    <label>Your AI Video Prompt</label>
+
+    <textarea id="generatedPrompt"></textarea>
+
+    <div class="actions">
+      <button class="secondary" onclick="copyText('generatedPrompt')">
+        📋 Copy Prompt
+      </button>
+
+      <button class="secondary" onclick="savePrompt()">
+        💾 Save
+      </button>
+    </div>
+
+    <div id="saveStatus" class="status"></div>
+
+  </div>
+</section>
+
+
+<!-- 6 CLIP STORY MAKER -->
+
+<section class="card">
+
+  <h2>🎬 6-Clip Story Maker</h2>
+
+  <label>Story / Video Idea</label>
+
+  <textarea id="story"
+  placeholder="Example: Four fruits celebrate 14 August in Pakistan..."></textarea>
+
+  <button class="primary" onclick="makeStory()">
+    🎬 Create 6 Clips
+  </button>
+
+  <div id="clips"></div>
+
+</section>
+
+
+<!-- PREVIEW -->
+
+<section class="card">
+
+  <h2>🎥 Video Preview</h2>
+
+  <div class="preview">
+    Your generated video will appear here.
+    <br><br>
+    AI generation engine will be connected in the next version.
+  </div>
+
+</section>
+
+</main>
+
+
+<script>
+
+function generatePrompt(){
+
+  const topic =
+    document.getElementById("topic").value.trim();
+
+  const ratio =
+    document.getElementById("ratio").value;
+
+  const style =
+    document.getElementById("style").value;
+
+  if(!topic){
+    alert("Pehle video ka idea likho.");
+    return;
+  }
+
+  const prompt =
+  `${topic}. ${style} visual style, highly detailed scene, natural character movement, expressive faces, smooth animation, cinematic lighting, realistic environment, professional camera movement, high quality, vertical ${ratio} format, clean composition, no text, no watermark.`;
+
+  document.getElementById("generatedPrompt").value = prompt;
+
+  document.getElementById("promptResult").style.display = "block";
+}
+
+
+function makeStory(){
+
+  const story =
+    document.getElementById("story").value.trim();
+
+  if(!story){
+    alert("Pehle story ya video idea likho.");
+    return;
+  }
+
+  const scenes = [
+
+    "Opening scene: Introduce the characters and location.",
+    "Scene 2: The characters start talking and reacting to each other.",
+    "Scene 3: Something interesting or funny happens.",
+    "Scene 4: The characters work together and the story develops.",
+    "Scene 5: The main exciting moment of the story.",
+    "Scene 6: Happy ending with a memorable final shot."
+
+  ];
+
+  const container =
+    document.getElementById("clips");
+
+  container.innerHTML = "";
+
+  scenes.forEach((scene,index)=>{
+
+    const prompt =
+      `${scene} Story idea: ${story}. `
+      + `Create a 10-second cinematic video clip, `
+      + `smooth natural movement, expressive characters, `
+      + `detailed environment, high quality, `
+      + `consistent characters and visual style, `
+      + `no text, no watermark.`;
+
+    const div =
+      document.createElement("div");
+
+    div.className = "clip";
+
+    div.innerHTML = `
+      <div class="clip-title">
+        🎬 Clip ${index+1} — 10 Seconds
+      </div>
+
+      <div class="clip-text" id="clip${index}">
+        ${prompt}
+      </div>
+
+      <button class="secondary"
+        onclick="copyClip(${index})">
+        📋 Copy Clip ${index+1}
+      </button>
+    `;
+
+    container.appendChild(div);
+
+  });
+
+}
+
+
+function copyText(id){
+
+  const text =
+    document.getElementById(id).value;
+
+  navigator.clipboard.writeText(text);
+
+  alert("Prompt copied! ✅");
+}
+
+
+function copyClip(index){
+
+  const text =
+    document.getElementById("clip"+index).innerText;
+
+  navigator.clipboard.writeText(text);
+
+  alert("Clip copied! ✅");
+}
+
+
+function savePrompt(){
+
+  const prompt =
+    document.getElementById("generatedPrompt").value;
+
+  localStorage.setItem(
+    "ZE_AI_Last_Prompt",
+    prompt
+  );
+
+  document.getElementById("saveStatus").innerText =
+    "Saved on this device ✅";
+}
+
+</script>
+
+</body>
+</html>
