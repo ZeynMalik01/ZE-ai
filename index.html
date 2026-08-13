@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZE AI Video Studio</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0b0f14;
+  color: white;
+}
+
+.header {
+  padding: 22px 18px;
+  text-align: center;
+  background: linear-gradient(135deg, #101820, #152b20);
+  border-bottom: 1px solid #26352c;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.logo span {
+  color: #22c55e;
+}
+
+.subtitle {
+  color: #aab4bd;
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+.container {
+  max-width: 650px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  background: #111820;
+  border: 1px solid #27323b;
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+label {
+  display: block;
+  margin-bottom: 9px;
+  font-weight: bold;
+}
+
+textarea {
+  width: 100%;
+  height: 150px;
+  resize: none;
+  background: #080d12;
+  color: white;
+  border: 1px solid #303b45;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 15px;
+  outline: none;
+}
+
+textarea:focus {
+  border-color: #22c55e;
+}
+
+.options {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+select {
+  flex: 1;
+  background: #080d12;
+  color: white;
+  border: 1px solid #303b45;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+button {
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 18px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background: #16a34a;
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(.98);
+}
+
+button:hover {
+  background: #22c55e;
+}
+
+#status {
+  text-align: center;
+  color: #9ca3af;
+  margin-top: 15px;
+}
+
+.preview {
+  height: 280px;
+  border-radius: 14px;
+  background: #070b0f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #68737d;
+  text-align: center;
+  border: 1px dashed #303b45;
+}
+
+.footer {
+  text-align: center;
+  color: #69747e;
+  font-size: 12px;
+  padding: 25px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="logo">ZE <span>AI Video Studio</span></div>
+  <div class="subtitle">Create your own AI video</div>
+</div>
+
+<div class="container">
+
+  <div class="card">
+
+    <label>🎬 Your Video Prompt</label>
+
+    <textarea id="prompt"
+      placeholder="Example: Four cute fruits talking about 14 August in a Pakistani street..."></textarea>
+
+    <div class="options">
+
+      <select id="ratio">
+        <option value="9:16">9:16 — Shorts / TikTok</option>
+        <option value="16:9">16:9 — YouTube</option>
+        <option value="1:1">1:1 — Square</option>
+      </select>
+
+      <select id="duration">
+        <option value="10">10 Seconds</option>
+        <option value="30">30 Seconds</option>
+        <option value="60">60 Seconds</option>
+      </select>
+
+    </div>
+
+    <button onclick="generateVideo()">✨ Generate Video</button>
+
+    <div id="status"></div>
+
+  </div>
+
+  <div class="card">
+
+    <label>🎥 Video Preview</label>
+
+    <div class="preview" id="preview">
+      Your generated video will appear here.
+    </div>
+
+  </div>
+
+</div>
+
+<div class="footer">
+  ZE AI Video Studio • Your own AI video creator
+</div>
+
+<script>
+
+function generateVideo() {
+
+  const prompt = document.getElementById("prompt").value;
+  const ratio = document.getElementById("ratio").value;
+  const duration = document.getElementById("duration").value;
+
+  const status = document.getElementById("status");
+  const preview = document.getElementById("preview");
+
+  if (!prompt.trim()) {
+    status.innerHTML = "⚠️ Pehle video prompt likho.";
+    return;
+  }
+
+  status.innerHTML = "⏳ Video generation system prepare ho raha hai...";
+
+  preview.innerHTML =
+    "<div>🎬<br><br>" +
+    "Prompt received!<br>" +
+    "Ratio: " + ratio + "<br>" +
+    "Duration: " + duration + " seconds" +
+    "</div>";
+
+  setTimeout(function() {
+    status.innerHTML =
+      "✅ Prompt successfully received! AI engine abhi connect nahi hua.";
+  }, 1500);
+}
+
+</script>
+
+</body>
+</html>
